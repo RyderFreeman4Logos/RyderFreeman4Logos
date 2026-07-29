@@ -1,33 +1,34 @@
 # Ryder Freeman
 
-Independent AI researcher in California building practical Rust and Python systems for local AI agents, retrieval, memory, translation, and host-specific model operations.
+**Independent AI researcher** developing local-first AI systems designed to keep evidence, provenance, and operating constraints visible.
 
-## Research Focus
+## Focus
 
-- Reliable, observable agent orchestration and evaluation.
-- Local-first retrieval, durable research memory, and evidence-oriented document systems.
-- Resource-aware inference operations and experiments whose conclusions stay scoped to their evidence.
+- **Agent systems** — bounded, observable orchestration and evaluation.
+- **Retrieval & memory** — durable local research state, provenance, and citation-oriented document systems.
+- **Inference operations** — resource-aware local deployment and evaluation, with conclusions scoped to the evidence and host.
 
-## Selected Projects
+## Selected work
 
-- **[cli-sub-agent](https://github.com/RyderFreeman4Logos/cli-sub-agent)** — A Rust runtime and `csa` CLI for headless, configuration-driven AI-agent orchestration.
-- **[Verbatim](https://github.com/RyderFreeman4Logos/verbatim)** — A Rust local document-retrieval system. Its [public issues](https://github.com/RyderFreeman4Logos/verbatim/issues) are first-class research and design artifacts—an “open-source prompts as open-source software” practice—where prompts and proposals are distinct from implemented code.
-- **[mempal](https://github.com/RyderFreeman4Logos/mempal)** — A Rust CLI and MCP server for local agent-memory capture and retrieval.
-- **[gb10-services](https://github.com/RyderFreeman4Logos/gb10-services)** — Host-specific deployment, configuration, validation, and recovery assets for local model services; its findings are scoped to that environment.
-- **[hymt](https://github.com/RyderFreeman4Logos/hymt)** — A tokenizer-aware Rust translation CLI with streaming output, caching, and configuration reloads.
-- **[mvln](https://github.com/RyderFreeman4Logos/mvln)** — A focused Rust CLI for moving paths while leaving symbolic links at their original locations.
+- **[cli-sub-agent](https://github.com/RyderFreeman4Logos/cli-sub-agent)** — Rust runtime and `csa` CLI for headless, configuration-driven AI-agent orchestration.
+- **[Verbatim](https://github.com/RyderFreeman4Logos/verbatim)** — Local, daemon-backed document retrieval with stable evidence IDs, locators, and citation-first context packs. Its [public issues](https://github.com/RyderFreeman4Logos/verbatim/issues) are research and design artifacts; prompts and proposals remain distinct from shipped code.
+- **[gb10-services](https://github.com/RyderFreeman4Logos/gb10-services)** — Deployment, configuration, validation, and recovery assets for a specific GB10-class local model stack; findings are scoped to that environment.
 
-## Current Research Questions
+**Focused tools:** [hymt](https://github.com/RyderFreeman4Logos/hymt) (translation) · [mvln](https://github.com/RyderFreeman4Logos/mvln) (move-and-link) · [mempal](https://github.com/RyderFreeman4Logos/mempal) *(fork; agent memory)*.
 
-- How can agent systems expose clear evidence and human review points while keeping automation bounded and reversible?
-- How can local retrieval combine lexical, vector, and provenance-oriented workflows without drifting beyond resource and durability constraints?
-- How should local inference and benchmarking preserve reproducible comparisons while separating experiments from production claims?
+## Current questions
 
-## Technical Work / Stack
+- **Human review** — How can agent systems expose evidence and review points while keeping automation bounded and reversible?
+- **Local retrieval** — How can lexical, vector, and provenance-oriented workflows coexist without exceeding resource or durability constraints?
+- **Evaluation** — How should local inference and benchmarking produce reproducible comparisons without turning experiments into production claims?
 
-Rust for CLIs and systems work; Python for operations and validation; SQLite and durable local state; MCP and configuration-driven agent workflows; local model serving, Docker, and systemd.
+## Working stack
 
-## Contact / Links
+- **Systems:** Rust, Python, SQLite, and durable local state.
+- **Agent workflows:** MCP and configuration-driven automation.
+- **Operations:** Local model serving, Docker, and systemd.
 
-- GitHub: [@RyderFreeman4Logos](https://github.com/RyderFreeman4Logos)
-- Public work: [RyderFreeman4Logos repositories](https://github.com/RyderFreeman4Logos?tab=repositories)
+## Links
+
+- **Contact:** [Telegram](https://t.me/Ryder_support_bot)
+- **Public work:** [RyderFreeman4Logos repositories](https://github.com/RyderFreeman4Logos?tab=repositories)
