@@ -16,6 +16,10 @@
 
 **Focused tools:** [hymt](https://github.com/RyderFreeman4Logos/hymt) (translation) · [mvln](https://github.com/RyderFreeman4Logos/mvln) (move-and-link) · [mempal](https://github.com/RyderFreeman4Logos/mempal) *(fork; agent memory)*.
 
+## GitHub signals
+
+[![cli-sub-agent stars](https://img.shields.io/github/stars/RyderFreeman4Logos/cli-sub-agent?style=flat&color=6b7280&label=cli-sub-agent%20stars)](https://github.com/RyderFreeman4Logos/cli-sub-agent) [![Verbatim open issues](https://img.shields.io/github/issues/RyderFreeman4Logos/verbatim?style=flat&color=6b7280&label=Verbatim%20open%20issues)](https://github.com/RyderFreeman4Logos/verbatim/issues) [![cli-sub-agent open PRs](https://img.shields.io/github/issues-pr/RyderFreeman4Logos/cli-sub-agent?style=flat&color=6b7280&label=cli-sub-agent%20open%20PRs)](https://github.com/RyderFreeman4Logos/cli-sub-agent/pulls)
+
 ## Current questions
 
 - **Human review** — How can agent systems expose evidence and review points while keeping automation bounded and reversible?
