@@ -1,38 +1,78 @@
 # Ryder Freeman
 
-**Independent AI researcher** developing local-first AI systems designed to keep evidence, provenance, and operating constraints visible.
+**Independent open-source maintainer · Rust systems · Agent tooling · Local AI**
 
-## Focus
+I build tools that make AI workflows **inspectable, recoverable, and practical to run on your own infrastructure**. My work spans agent execution, source-grounded retrieval, inference services, and durable archives. Rust is my primary language; Python, Linux, Docker, and systemd connect the pieces.
 
-- **Agent systems** — bounded, observable orchestration and evaluation.
-- **Retrieval & memory** — durable local research state, provenance, and citation-oriented document systems.
-- **Inference operations** — resource-aware local deployment and evaluation, with conclusions scoped to the evidence and host.
+I develop with coding agents and publish the implementation, design decisions, and regression cases alongside the code.
 
-## Selected work
+[Selected projects](#selected-projects) · [Maintained forks](#maintained-forks) · [Upstream contributions](#merged-upstream-contributions) · [Technical project notes](https://github.com/RyderFreeman4Logos/RyderFreeman4Logos/blob/main/PROJECTS.md) · [Contact](https://t.me/Ryder_support_bot)
 
-- **[cli-sub-agent](https://github.com/RyderFreeman4Logos/cli-sub-agent)** — Rust runtime and `csa` CLI for headless, configuration-driven AI-agent orchestration.
-- **[Verbatim](https://github.com/RyderFreeman4Logos/verbatim)** — Local, daemon-backed document retrieval with stable evidence IDs, locators, and citation-first context packs. Its [public issues](https://github.com/RyderFreeman4Logos/verbatim/issues) are research and design artifacts; prompts and proposals remain distinct from shipped code.
-- **[gb10-services](https://github.com/RyderFreeman4Logos/gb10-services)** — Deployment, configuration, validation, and recovery assets for a specific GB10-class local model stack; findings are scoped to that environment.
+## Selected projects
 
-**Focused tools:** [hymt](https://github.com/RyderFreeman4Logos/hymt) (translation) · [mvln](https://github.com/RyderFreeman4Logos/mvln) (move-and-link) · [mempal](https://github.com/RyderFreeman4Logos/mempal) *(fork; agent memory)*.
+### [adk-workflow-kit](https://github.com/RyderFreeman4Logos/adk-workflow-kit)
 
-## GitHub signals
+**Recoverable agent workflows in Rust.** Compiles declarative TOML workflows into validated execution graphs on ADK-Rust. Implements durable checkpoints, resume and inspection, offline replay, and explicit capability policies for tool execution.
 
-[![cli-sub-agent stars](https://img.shields.io/github/stars/RyderFreeman4Logos/cli-sub-agent?style=flat&color=6b7280&label=cli-sub-agent%20stars)](https://github.com/RyderFreeman4Logos/cli-sub-agent) [![Verbatim open issues](https://img.shields.io/github/issues/RyderFreeman4Logos/verbatim?style=flat&color=6b7280&label=Verbatim%20open%20issues)](https://github.com/RyderFreeman4Logos/verbatim/issues) [![cli-sub-agent open PRs](https://img.shields.io/github/issues-pr/RyderFreeman4Logos/cli-sub-agent?style=flat&color=6b7280&label=cli-sub-agent%20open%20PRs)](https://github.com/RyderFreeman4Logos/cli-sub-agent/pulls)
+The interesting work is in the failure paths: retaining tool-effect history, checking compatibility before resuming, and testing recovery after a real process crash.
 
-## Current questions
+[Architecture](https://github.com/RyderFreeman4Logos/adk-workflow-kit/tree/main/docs/architecture) · [Crash/resume tests](https://github.com/RyderFreeman4Logos/adk-workflow-kit/blob/main/crates/workflowctl/tests/m1_12_destructive_resume.rs) · [Maintenance](https://github.com/RyderFreeman4Logos/adk-workflow-kit/commits/main/)
 
-- **Human review** — How can agent systems expose evidence and review points while keeping automation bounded and reversible?
-- **Local retrieval** — How can lexical, vector, and provenance-oriented workflows coexist without exceeding resource or durability constraints?
-- **Evaluation** — How should local inference and benchmarking produce reproducible comparisons without turning experiments into production claims?
+### [llm-guard-proxy](https://github.com/RyderFreeman4Logos/llm-guard-proxy) + [gb10-services](https://github.com/RyderFreeman4Logos/gb10-services)
 
-## Working stack
+**Local inference that can be operated and diagnosed.** A Rust OpenAI-compatible gateway adds bounded queues, retries, streaming lifecycle handling, loop detection, and observability. The companion GB10 stack brings together chat, embedding, and reranking services with pinned deployment assets and recovery procedures.
 
-- **Systems:** Rust, Python, SQLite, and durable local state.
-- **Agent workflows:** MCP and configuration-driven automation.
-- **Operations:** Local model serving, Docker, and systemd.
+Highlights include persisted recovery records, checks tied to a specific service instance, and a low-memory emergency operation that avoids allocation.
 
-## Links
+[Proxy architecture](https://github.com/RyderFreeman4Logos/llm-guard-proxy/blob/main/docs/architecture.md) · [Emergency-path test](https://github.com/RyderFreeman4Logos/llm-guard-proxy/blob/main/crates/llm-guard-proxy-host-guardian/tests/no_alloc.rs) · [Deployment and experiments](https://github.com/RyderFreeman4Logos/gb10-services)
 
-- **Contact:** [Telegram](https://t.me/Ryder_support_bot)
-- **Public work:** [RyderFreeman4Logos repositories](https://github.com/RyderFreeman4Logos?tab=repositories)
+### [Verbatim](https://github.com/RyderFreeman4Logos/verbatim)
+
+**Document retrieval with traceable evidence.** A local Rust daemon and CLI for searching documents and code through lexical and vector retrieval, with optional reranking. Results carry stable evidence IDs and source locators; generated answers can be checked against their cited evidence.
+
+The design keeps original passages, derived material, and generated answers distinguishable, with explicit storage and recovery contracts.
+
+[Evidence model](https://github.com/RyderFreeman4Logos/verbatim/blob/main/docs/safety-model.md) · [Durability](https://github.com/RyderFreeman4Logos/verbatim/blob/main/docs/sqlite-durability.md) · [Implementation](https://github.com/RyderFreeman4Logos/verbatim/tree/main/crates)
+
+### [telegram-archive-bot](https://github.com/RyderFreeman4Logos/telegram-archive-bot)
+
+**Durable source archives and audio delivery in Rust.** Preserves canonical source revisions in SQLite and immutable content-addressed files, with recoverable jobs, validated media, backup/restore, and a deterministic Git projection. Integrates translation through `hymt` and audio through `md2audio`.
+
+Currently a **release candidate**, with explicit provider and client acceptance checks.
+
+[Release candidates](https://github.com/RyderFreeman4Logos/telegram-archive-bot/releases) · [Storage and crash tests](https://github.com/RyderFreeman4Logos/telegram-archive-bot/blob/main/src/storage.rs) · [Recovery](https://github.com/RyderFreeman4Logos/telegram-archive-bot/blob/main/docs/recovery.md)
+
+## Focused tools
+
+| Project | What it provides |
+| --- | --- |
+| [pbi](https://github.com/RyderFreeman4Logos/pbi) | Native Rust source search with bounded BM25 ranking, parser-based extraction, and optional model synthesis with citations checked against source spans. |
+| [skillcfg](https://github.com/RyderFreeman4Logos/skillcfg) | Shared TOML preferences across agent skills, symlink-aware discovery, dependency validation, and configuration impact inspection. |
+| [hymt](https://github.com/RyderFreeman4Logos/hymt) | Rust translation libraries and CLI with tokenizer-aware segmentation, Markdown structure handling, caching, and streaming. |
+| [mesh-proxy](https://github.com/RyderFreeman4Logos/mesh-proxy) | Iroh/QUIC service networking for TCP and Unix sockets, with invitation-based joining and persisted routes. |
+| [md2audio](https://github.com/RyderFreeman4Logos/md2audio) | Markdown-to-audio workflows with subtitles, optional video, and an explicitly selected offline speech backend. |
+| [openwebui-skill](https://github.com/RyderFreeman4Logos/openwebui-skill) | A Rust CLI for agent conversations that remain visible in Open WebUI, with local JSONL history. |
+
+These projects share working components: `pbi` uses `adk-workflow-kit`, and the archive bot integrates `hymt` and `md2audio`. See the [project notes](https://github.com/RyderFreeman4Logos/RyderFreeman4Logos/blob/main/PROJECTS.md) for source links, smaller utilities, and earlier security work.
+
+## Maintained forks
+
+- **[ADK-Rust](https://github.com/RyderFreeman4Logos/adk-rust)** — My fork of [zavora-ai/adk-rust](https://github.com/zavora-ai/adk-rust). Work includes [subprocess ownership and cleanup across cancellation](https://github.com/RyderFreeman4Logos/adk-rust/pull/34), [preserving terminal streaming output](https://github.com/RyderFreeman4Logos/adk-rust/pull/29), and [retaining caller-provided JSON Schemas](https://github.com/RyderFreeman4Logos/adk-rust/pull/16).
+- **[Hermes Agent](https://github.com/RyderFreeman4Logos/hermes-agent)** — My fork of [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent). A maintained patch stack for long-running agents: cache-aware context handling, bounded compression, session recovery, and process lifecycle fixes. The [integration ledger](https://github.com/RyderFreeman4Logos/hermes-agent/pull/188) connects retained behavior to source patches and validation records.
+
+## Merged upstream contributions
+
+| Upstream | Contributions accepted by its maintainers |
+| --- | --- |
+| [rspow](https://github.com/zolagonano/rspow) | Configurable proof-of-work difficulty, concurrent solving, EquiX proof bundles, and feature-gated backends: [#1](https://github.com/zolagonano/rspow/pull/1), [#2](https://github.com/zolagonano/rspow/pull/2), [#3](https://github.com/zolagonano/rspow/pull/3), [#4](https://github.com/zolagonano/rspow/pull/4). |
+| [nazgul](https://github.com/edwinhere/nazgul) | Conditional Serde serialization support for CLSAG ring signatures: [#3](https://github.com/edwinhere/nazgul/pull/3). |
+
+## In development
+
+**[akasha-otsuge](https://github.com/RyderFreeman4Logos/akasha-otsuge)** explores local, traceable memory across coding agents. The current Rust foundation implements immutable source evidence, atomic versioned storage, durable idempotent writes, and checksum-verified backup/restore. Host integrations and retrieval remain on the MVP roadmap.
+
+## Documentation and collaboration
+
+I also publish [ADK-Rust documentation in Simplified Chinese](https://github.com/RyderFreeman4Logos/adk-rust-zh-cn) and a [bilingual Hermes documentation mirror](https://github.com/RyderFreeman4Logos/hermes-agent-docs-i18n), using source manifests or incremental translation to keep the work traceable.
+
+For bugs and technical discussion, open an issue in the relevant repository. For direct contact: **[Telegram](https://t.me/Ryder_support_bot)**.
