@@ -1,8 +1,8 @@
 # Ryder Freeman
 
-**Independent open-source maintainer · Rust systems · Agent tooling · Local AI**
+**Independent open-source maintainer · Rust systems · Agent tooling · Local AI · Translation**
 
-I build tools that make AI workflows **inspectable, recoverable, and practical to run on your own infrastructure**. My work spans agent execution, source-grounded retrieval, inference services, and durable archives. Rust is my primary language; Python, Linux, Docker, and systemd connect the pieces.
+I build tools that make AI workflows **inspectable, recoverable, and practical to run on your own infrastructure**. My work spans agent execution, source-grounded retrieval, local inference, translation systems, and durable archives. Rust is my primary language; Python, Linux, Docker, and systemd connect the pieces.
 
 I develop with coding agents and publish the implementation, design decisions, and regression cases alongside the code.
 
@@ -17,6 +17,19 @@ I develop with coding agents and publish the implementation, design decisions, a
 The interesting work is in the failure paths: retaining tool-effect history, checking compatibility before resuming, and testing recovery after a real process crash.
 
 [Architecture](https://github.com/RyderFreeman4Logos/adk-workflow-kit/tree/main/docs/architecture) · [Crash/resume tests](https://github.com/RyderFreeman4Logos/adk-workflow-kit/blob/main/crates/workflowctl/tests/m1_12_destructive_resume.rs) · [Maintenance](https://github.com/RyderFreeman4Logos/adk-workflow-kit/commits/main/)
+
+### [hymt](https://github.com/RyderFreeman4Logos/hymt)
+
+**Neural translation engineered for actual developer workflows—not just a model API wrapper.** A Rust workspace and CLI for Hy-MT2, covering Markdown/document trees, terminal output, man/info pages, and optional Telegram translation.
+
+- **Source-owned Markdown.** Parser byte ranges protect syntax such as code fences, YAML frontmatter, link destinations and reference definitions while exposing text and link labels for translation. Mixed-language planning can preserve confidently detected Chinese-family paragraphs byte-for-byte. Oversized protected blocks remain intact.
+- **Full-request token budgeting.** Plans against the model tokenizer, rendered chat template, per-request context, output allowance, and retry reserve—not naive character splits. Missing tokenizer metadata triggers an explicit conservative estimate or strict refusal.
+- **Robust streaming and backends.** Pipe-friendly completed-paragraph output keeps data on `stdout` and progress on `stderr`, with retries for interrupted responses and protocol truncation. Explicit llama.cpp/vLLM adapters respect their different sampling semantics; preflight also detects and suppresses a specific incorrect EOS token reported by some llama.cpp services.
+- **Evidence-aware reuse and measurable performance.** Optional segment caching is bound to verified runtime/prompt identity; complete validated runs can be replayed locally from persisted evidence without contacting the model. SQLite history supports ETA estimation, and a versioned benchmark suite measures quality, exact-token preservation, syntax validity, truncation, and latency.
+
+**Try it:** `hymt translate-doc README.md -l zh` · `hymt exec -- cargo test` · `hymt man git-rebase`
+
+[Markdown ownership code](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-translate/src/translate/markdown_ownership.rs) · [Backend/EOS regression tests](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-client/src/backend_preflight_tests.rs) · [Recovery and replay tests](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-translate/src/translate/tests/retained_original_tests.rs) · [Benchmark methodology](https://github.com/RyderFreeman4Logos/hymt/blob/main/benchmarks/README.md)
 
 ### [llm-guard-proxy](https://github.com/RyderFreeman4Logos/llm-guard-proxy) + [gb10-services](https://github.com/RyderFreeman4Logos/gb10-services)
 
@@ -48,7 +61,6 @@ Currently a **release candidate**, with explicit provider and client acceptance 
 | --- | --- |
 | [pbi](https://github.com/RyderFreeman4Logos/pbi) | Native Rust source search with bounded BM25 ranking, parser-based extraction, and optional model synthesis with citations checked against source spans. |
 | [skillcfg](https://github.com/RyderFreeman4Logos/skillcfg) | Shared TOML preferences across agent skills, symlink-aware discovery, dependency validation, and configuration impact inspection. |
-| [hymt](https://github.com/RyderFreeman4Logos/hymt) | Rust translation libraries and CLI with tokenizer-aware segmentation, Markdown structure handling, caching, and streaming. |
 | [mesh-proxy](https://github.com/RyderFreeman4Logos/mesh-proxy) | Iroh/QUIC service networking for TCP and Unix sockets, with invitation-based joining and persisted routes. |
 | [md2audio](https://github.com/RyderFreeman4Logos/md2audio) | Markdown-to-audio workflows with subtitles, optional video, and an explicitly selected offline speech backend. |
 | [openwebui-skill](https://github.com/RyderFreeman4Logos/openwebui-skill) | A Rust CLI for agent conversations that remain visible in Open WebUI, with local JSONL history. |
@@ -73,6 +85,6 @@ These projects share working components: `pbi` uses `adk-workflow-kit`, and the 
 
 ## Documentation and collaboration
 
-I also publish [ADK-Rust documentation in Simplified Chinese](https://github.com/RyderFreeman4Logos/adk-rust-zh-cn) and a [bilingual Hermes documentation mirror](https://github.com/RyderFreeman4Logos/hermes-agent-docs-i18n), using source manifests or incremental translation to keep the work traceable.
+I also publish [ADK-Rust documentation in Simplified Chinese](https://github.com/RyderFreeman4Logos/adk-rust-zh-cn), with upstream source snapshots and a SHA-256 source manifest for traceability.
 
 For bugs and technical discussion, open an issue in the relevant repository. For direct contact: **[Telegram](https://t.me/Ryder_support_bot)**.

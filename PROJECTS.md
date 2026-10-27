@@ -43,6 +43,49 @@ A bounded static scanner recognizes supported literal shell references while rep
 
 [Core library](https://github.com/RyderFreeman4Logos/skillcfg/blob/main/crates/skillcfg-core/src/lib.rs) · [Static scanner](https://github.com/RyderFreeman4Logos/skillcfg/blob/main/crates/skillcfg-core/src/validate/scanner.rs) · [Scanner regression cases](https://github.com/RyderFreeman4Logos/skillcfg/blob/main/crates/skillcfg/tests/scanner.rs)
 
+## Translation engineering: hymt
+
+[Repository](https://github.com/RyderFreeman4Logos/hymt) · Original Rust project · Apache-2.0 · [English documentation](https://github.com/RyderFreeman4Logos/hymt/blob/main/README.md) · [简体中文文档](https://github.com/RyderFreeman4Logos/hymt/blob/main/README.zh-cn.md)
+
+Rather than just calling Hy-MT2 with a sentence and writing the result, `hymt` makes long, structured text and terminal workflows manageable on a self-hosted translation model. The modular Rust workspace separates tokenizer-aware planning, model transport, SQLite caches/history, orchestration, and CLI integrations. It can translate source files, whole directory trees, command output, `man`/`info` documentation, and Telegram messages. A `translate-doc` workflow supports bilingual Markdown maintenance.
+
+**Source ownership instead of naive Markdown splitting.** The Markdown pipeline parses complete-document context and tracks original byte intervals: structural markers, code fences, leading frontmatter, reference definitions, link destinations, and opaque blocks belong to the source, while literal text leaves—including labels inside reference links and images—can be given to the model. Coherent inline paragraphs are sent as a single request when they fit, preserving surrounding context. Oversized protected sections (including tables) are retained as original bytes rather than cut mid-structure. Tests cover escaped punctuation, link normalization and duplicate references, nested inline syntax, exact occurrence matching, and bounds on interval scans.
+
+[Source-owner implementation](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-translate/src/translate/markdown_ownership.rs) · [Ownership/complexity tests](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-translate/src/translate/tests/ownership_interval_tests.rs) · [Structure preservation tests](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-translate/src/translate/tests/source_structure.rs)
+
+**Context-aware, inspectable request planning.** A selected Hy-MT2 profile pins the relevant tokenizer; the planner can count the complete rendered chat exchange, including role framing, template, the assistant marker, source material, output reservation, and retries for truncated responses. It accounts for service-wide context divided among parallel slots, not just the server's advertised total. When a verified tokenizer/template is absent, the CLI discloses an approximate conservative budget; strict mode refuses such planning. `--plan` exposes segment decisions and token accounting before requesting translations. For Chinese-family targets only, a deliberate CJK ratio heuristic can keep already-target-language paragraphs as byte-exact source; other targets do not claim generic language identification.
+
+[Tokenizer and segmentation](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-segment/src/split.rs) · [Token and timing tests](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-translate/src/translate/tests/timing_tests.rs)
+
+**Streaming with meaningful completion rules.** Data belongs on `stdout` and diagnostic progress on `stderr`, so the output remains useful in pipelines. Completed paragraphs may be published incrementally, but atomic JSON and structurally sensitive output is buffered. The HTTP client handles SSE split across TCP/UTF-8 boundaries, CRLF/LF, multiline events, dropped connections, and unexpected end-of-stream. Transport retry attempts preserve the same admitted logical request and never relabel partial output as a successful complete translation. Protocol-level truncation is handled separately; exhausted completeness retries can preserve the original marked paragraph under the documented warn-only policy, while strict mode or atomic JSON fails. Source preservation here is not a guarantee that the model translates or reproduces all Markdown correctly: completed model output is not silently rewritten to hide semantic or formatting failures.
+
+[SSE protocol tests](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-client/src/sse_protocol_tests.rs) · [Transport, partial output and source retention](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-translate/src/translate/tests/retained_original_tests.rs) · [Cache admission/backpressure tests](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-translate/src/translate/tests/cache_admission_tests.rs)
+
+**An explicit inference contract.** `llama_cpp`, `vllm` and conservative OpenAI-compatible adapters distinguish omitted sampler values (let the server decide) from explicit numeric or disabled overrides; unsupported wire representations are rejected rather than guessed. Preflight reads available runtime metadata and reports unverified identities instead of inventing model/build/defaults information. It also recognizes a specific llama.cpp metadata inconsistency: an ASCII punctuation `eos_token` alongside a control-marker chat template. It resolves the false token ID through `/tokenize` and applies targeted llama.cpp logit bias without suppressing the real control-marker EOS. Runtime identities are TTL-cached and invalidated when relevant live configuration changes; strict backend preflight is available.
+
+[Backend preflight and EOS tests](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-client/src/backend_preflight_tests.rs) · [Request fingerprint and inference adapter tests](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-client/src/backend_payload_tests.rs)
+
+**Cache correctness, recovery, and observability.** Application-level segment and whole-output caches are opt-in. Cache reuse is scoped to source, target, fully rendered prompts, tokenizer/profile, explicit sampling, and verified inference identity. Matching fully completed work can be locally replayed from SQLite with bounded saved proof, without a live preflight; historical metadata does not confer verification for new work. Failed, degraded, or incomplete attempts do not populate the successful replay proof. A separate optional inference-response cache supports trusted local-network consumers with its own identity/epoch controls; it is plaintext and is not an authentication boundary. The CLI tracks historical throughput, percentile-based ETA and completion statistics, with a prompt to file timing-divergence bug reports. File writes use same-directory temporary files and rename-on-success to preserve previous outputs on ordinary failures, while explicitly excluding power-loss durability guarantees.
+
+[Replay tests](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-translate/src/translate/tests/retained_original_tests.rs) · [Cache policy tests](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-translate/src/translate/tests/cache_admission_tests.rs) · [Timing and config consistency](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-translate/src/translate/tests/timing_tests.rs)
+
+**Reproducible quality gates, not unsupported benchmark claims.** The versioned translation corpus has more than 50 examples, including Chinese↔English, other target languages, structured Markdown/JSON/YAML/TOML, CLI syntax and adversarial truncation. The benchmark harness can compare Transformers, vLLM and llama.cpp Q6_K/Q4_K_M using chrF, exact protected-token survival, structured parsing, completeness, language residue, and streaming/total latency. It requires explicit opt-in for live inference and records model/tokenizer/backend identities to make regressions reproducible. The repository documents the suite and methodology; it does not imply any unreported benchmark win.
+
+[Benchmark methodology](https://github.com/RyderFreeman4Logos/hymt/blob/main/benchmarks/README.md) · [Versioned corpus](https://github.com/RyderFreeman4Logos/hymt/blob/main/benchmarks/corpus/v1.json) · [Acceptance gates](https://github.com/RyderFreeman4Logos/hymt/blob/main/benchmarks/decision-gates.toml)
+
+**Representative commands:**
+
+```bash
+hymt article.md -l zh | less
+hymt translate-doc docs/ --recursive
+hymt batch docs -l zh --dry-run
+hymt exec -- cargo test
+hymt man git-rebase
+hymt backend inspect
+```
+
+These are deployable engineering features and public regression cases, not a claim that model-generated translations are semantically infallible.
+
 ## Local inference and operations
 
 ### llm-guard-proxy
@@ -65,7 +108,7 @@ The work addresses shared-memory pressure, service identity, startup ordering, a
 
 [Service layout and capacity contracts](https://github.com/RyderFreeman4Logos/gb10-services/blob/main/README.md) · [Deployment guidance](https://github.com/RyderFreeman4Logos/gb10-services/tree/main/docs/deployment) · [Regression tests](https://github.com/RyderFreeman4Logos/gb10-services/tree/main/tests) · [Dated research records](https://github.com/RyderFreeman4Logos/gb10-services/tree/main/docs/research)
 
-## Evidence, archives, and language access
+## Evidence and archives
 
 ### Verbatim
 
@@ -87,22 +130,11 @@ The storage and recovery code includes tests for interrupted publication, concur
 
 [Storage implementation and tests](https://github.com/RyderFreeman4Logos/telegram-archive-bot/blob/main/src/storage.rs) · [Source-revision tests](https://github.com/RyderFreeman4Logos/telegram-archive-bot/blob/main/tests/sources.rs) · [Backup/restore tests](https://github.com/RyderFreeman4Logos/telegram-archive-bot/blob/main/tests/recovery_cli.rs) · [Release status](https://github.com/RyderFreeman4Logos/telegram-archive-bot/releases)
 
-### hymt
-
-[Repository](https://github.com/RyderFreeman4Logos/hymt) · Original project · Apache-2.0
-
-Rust translation libraries and a terminal-oriented CLI for Hy-MT2. The workspace separates token-aware segmentation, model transport, caching, translation, CLI integration, and benchmarking.
-
-For Markdown, source offsets distinguish syntax that must be preserved from text eligible for translation. The transport layer handles incremental SSE, including split UTF-8, multiline events, truncation, and dropped connections. The CLI supports batch documents, command-output translation, translated manual pages, and bilingual document synchronization.
-
-[Markdown structure handling](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-translate/src/translate/markdown_ownership.rs) · [Structure regression tests](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-translate/src/translate/tests/source_structure.rs) · [Streaming protocol tests](https://github.com/RyderFreeman4Logos/hymt/blob/main/crates/hymt-client/src/sse_protocol_tests.rs)
-
 ### Documentation projects
 
 - **[ADK-Rust Simplified Chinese documentation](https://github.com/RyderFreeman4Logos/adk-rust-zh-cn):** an mdBook translation of upstream documentation, with an English source snapshot and SHA-256 source manifest.
-- **[Hermes Agent bilingual documentation](https://github.com/RyderFreeman4Logos/hermes-agent-docs-i18n):** an English/Chinese mdBook mirror with incremental translation through `hymt` and source-file hash tracking.
 
-These are community documentation projects; the linked upstream projects retain their own authorship and governance.
+This is a community documentation project; the linked upstream framework retains its own authorship and governance.
 
 ## Working connections between projects
 
@@ -112,7 +144,6 @@ These are community documentation projects; the linked upstream projects retain 
 | `telegram-archive-bot` | `hymt` translation libraries through a separately built bridge | [Translation integration](https://github.com/RyderFreeman4Logos/telegram-archive-bot/blob/main/docs/translation.md) |
 | `telegram-archive-bot` | `md2audio` speech adapter | [Speech pipeline](https://github.com/RyderFreeman4Logos/telegram-archive-bot/blob/main/docs/speech.md) |
 | `gb10-services` | `llm-guard-proxy` for model routing, observability, and recovery | [Service configuration](https://github.com/RyderFreeman4Logos/gb10-services/blob/main/README.md) |
-| Hermes documentation mirror | `hymt` for incremental English-to-Chinese translation | [Sync workflow](https://github.com/RyderFreeman4Logos/hermes-agent-docs-i18n/blob/master/README.md) |
 
 ## Maintained forks and upstream work
 
