@@ -4,6 +4,19 @@
 
 I build primarily in Rust, concentrating on the boundaries where agent systems meet real state: source evidence, tool effects, process lifetimes, persistence, and constrained inference hardware. This page gives a closer view of the implementation behind the [profile overview](README.md).
 
+## How I build: approved design → ordered issues → verified implementation
+
+My development process is intended to make coding agents useful well beyond an interactive pair-programming session. It is a **design-first, issue-driven workflow** with explicit handoff and acceptance points.
+
+1. **Design with frontier agents.** I discuss requirements, architecture, interfaces, trade-offs, and likely failure modes with capable AI agents. I remain responsible for choosing and approving the specification rather than immediately accepting the first generated implementation.
+2. **Turn the agreed design into an issue queue.** I create feature issues, often through automated generation, with implementation order, prerequisite dependencies, scoped requirements, non-goals, deliverables, and testable acceptance conditions. Issues act as persistent contracts that another agent session can pick up without needing the full design conversation.
+3. **Execute sequentially with Codex.** Codex is my current implementation agent; I previously used Hermes Agent in this role. The intended execution loop is to implement the next unblocked issue, test it, document evidence, and proceed through the dependency graph. Newly discovered defects can become separate follow-up issues instead of silently weakening the original acceptance conditions.
+4. **Verify before claiming completion.** Passing tests, review, explicit acceptance checks, and links to actual artifacts matter more than the issue's closed label. The approach should make it possible to finish an approved issue plan and obtain the intended software while minimizing routine human intervention, but it is **a workflow I am actively validating, not a claim of guaranteed autonomous correctness**.
+
+There is a public trail behind this approach. An [adk-workflow-kit Sentinel issue (#235)](https://github.com/RyderFreeman4Logos/adk-workflow-kit/issues/235) specifies *implementation order 13 of 38*, dependencies, concrete deliverables, security constraints, acceptance criteria, and mandatory tests. An [akasha-otsuge storage decision issue (#3)](https://github.com/RyderFreeman4Logos/akasha-otsuge/issues/3) originated in a versioned specification and was closed with an implementation PR, architectural decision record, benchmark artifacts, recorded measurements, quality gates, and remaining limitations. The latter is an example of substantiated issue acceptance, not a claim that the entire MVP is complete.
+
+**Why I use Codex:** More autonomous execution makes rigorous issue definitions, reproducible regression tests, independent review, and security checks more important. I want the agent to take over routine implementation while I stay responsible for architecture and acceptance—and to make multi-hour, mostly unattended work auditable by others.
+
 ## Agent execution and developer tools
 
 ### adk-workflow-kit

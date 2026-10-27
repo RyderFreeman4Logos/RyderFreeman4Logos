@@ -6,7 +6,13 @@ I build tools that make AI workflows **inspectable, recoverable, and practical t
 
 I develop with coding agents and publish the implementation, design decisions, and regression cases alongside the code.
 
-[Selected projects](#selected-projects) · [Maintained forks](#maintained-forks) · [Upstream contributions](#merged-upstream-contributions) · [Technical project notes](https://github.com/RyderFreeman4Logos/RyderFreeman4Logos/blob/main/PROJECTS.md) · [Contact](https://t.me/Ryder_support_bot)
+[Development workflow](#development-workflow) · [Selected projects](#selected-projects) · [Maintained forks](#maintained-forks) · [Upstream contributions](#merged-upstream-contributions) · [Technical project notes](https://github.com/RyderFreeman4Logos/RyderFreeman4Logos/blob/main/PROJECTS.md) · [Contact](https://t.me/Ryder_support_bot)
+
+## Development workflow
+
+I use a **design-first, issue-driven** approach to AI-assisted software development. First I work through requirements, architecture, trade-offs, and failure cases with frontier AI agents until I approve the design. I turn that specification into a dependency-ordered set of GitHub feature issues—often generated automatically—with implementation requirements and acceptance tests. **Codex now works through those issues in sequence**, a role I previously filled with Hermes Agent.
+
+My goal is a repeatable path from an approved design to tested software that supports **long, largely unattended development runs**. Closing every issue is an objective, not a substitute for verification: tests, review, and recorded acceptance evidence determine whether the software meets its specification. See an [ordered 38-item plan](https://github.com/RyderFreeman4Logos/adk-workflow-kit/issues/235) and an [accepted issue with reproducible evidence](https://github.com/RyderFreeman4Logos/akasha-otsuge/issues/3).
 
 ## Selected projects
 
